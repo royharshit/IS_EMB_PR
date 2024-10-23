@@ -1,5 +1,5 @@
 run:
-	../gem5/build/X86/gem5.fast ../system/system_6cpu_o3_4G_b1_bypass_alt.py --binary /home/harshit/Harshit/Yongkee/IS_EMB_PR/IS_Microbench/bin/is.C.x
+	../gem5/build/X86/gem5.fast ../system/system_6cpu_o3_4G_b1_bypass_alt.py --binary ../IS_Microbench/bin/is.C.x
 
 clean:
 	rm -rf m5out*

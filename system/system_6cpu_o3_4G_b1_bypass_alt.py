@@ -15,7 +15,7 @@ m5.util.addToPath('$HOME/gem5/configs')
 
 thispath = os.path.dirname(os.path.realpath(__file__))
 default_binary = os.path.join(
-    '/home/harshit/Harshit/Yongkee/b1_bypass/code/test')
+    '/home/harshit/Harshit/Yongkee/IS_EMB_PR/IS_Microbench/bin/is.C.x')
 
 
 parser = argparse.ArgumentParser()

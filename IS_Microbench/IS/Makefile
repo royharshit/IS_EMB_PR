@@ -2,7 +2,9 @@ SHELL=/bin/sh
 BENCHMARK=is
 BENCHMARKU=IS
 
+include ../config/make.def
 
+include ../sys/make.common
 
 OBJS = is.o \
        ${COMMON}/c_print_results.o \

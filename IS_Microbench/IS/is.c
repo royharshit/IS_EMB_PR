@@ -55,7 +55,7 @@
 /* Example:  SGI O2000:   400% slowdown with buckets (Wow!)      */
 /*****************************************************************/
 /* To disable the use of buckets, comment out the following line */
-#define USE_BUCKETS
+//#define USE_BUCKETS
 
 /* Uncomment below for cyclic schedule */
 /*#define SCHED_CYCLIC*/

@@ -43,7 +43,7 @@
 #include <omp.h>
 #endif
 
-
+#include <gem5/m5ops.h>
 /*****************************************************************/
 /* For serial IS, buckets are not really req'd to solve NPB1 IS  */
 /* spec, but their use on some machines improves performance, on */
@@ -975,9 +975,8 @@ int main( int argc, char **argv )
 
     if( CLASS != 'S' ) printf( "\n   iteration\n" );
 
-/*  Start timer  */             
-    timer_start( 0 );
-
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
 
 /*  This is the main iteration */
     for( iteration=1; iteration<=MAX_ITERATIONS; iteration++ )
@@ -986,11 +985,8 @@ int main( int argc, char **argv )
         rank( iteration );
     }
 
-
-/*  End of timing, obtain maximum time of all processors */
-    timer_stop( 0 );
-    timecounter = timer_read( 0 );
-
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
 
 /*  This tests that keys are in sequence: sorting of last ranked key seq
     occurs here, but is an untimed operation                             */

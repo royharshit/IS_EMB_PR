@@ -71,6 +71,7 @@ FLINKFLAGS = $(FFLAGS)
 #                            $(CC) $(CFLAGS)
 # linking is done with       $(CLINK) $(C_LIB) $(CLINKFLAGS)
 #---------------------------------------------------------------------------
+GEM_HOME=../../b1_instruction
 
 #---------------------------------------------------------------------------
 # This is the C compiler used for C programs
@@ -82,12 +83,12 @@ CLINK	= $(CC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-C_LIB  = -lm
+C_LIB  = -lm5
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
 #---------------------------------------------------------------------------
-C_INC =
+C_INC = -I $(GEM_HOME)/include
 
 #---------------------------------------------------------------------------
 # Global *compile time* flags for C programs
@@ -104,7 +105,7 @@ C_INC =
 # _LARGEFILE64_SOURCE - are standard compiler flags which allow to work with 
 # files larger than 2GB.
 #---------------------------------------------------------------------------
-CFLAGS	= -O3 -fopenmp
+CFLAGS	= -O3 -fopenmp -L$(GEM_HOME)/util/m5/build/x86/out/ -lm5
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 

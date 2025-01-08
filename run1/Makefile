@@ -1,5 +1,5 @@
 run:
-	../b1_instruction/build/X86/gem5.debug ../system/system_6cpu_o3_4G_b1_bypass_alt.py --binary ../IS_Microbench/bin/is.C.x
+	nohup ../b1_instruction/build/X86/gem5.opt ../system/system_6cpu_o3_4G.py --binary ../IS_Microbench/bin/is.C.x
 
 clean:
 	rm -rf m5out*

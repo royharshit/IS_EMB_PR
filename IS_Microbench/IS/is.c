@@ -60,6 +60,7 @@
 /* Uncomment below for cyclic schedule */
 /*#define SCHED_CYCLIC*/
 
+#define DISTANCE 16
 
 /******************/
 /* default values */
@@ -772,10 +773,15 @@ void rank( int iteration )
     own indexes to determine how many of each there are: their
     individual population                                       */
 
+    m5_work_begin(0, 0);
+
     #pragma omp for nowait schedule(static)
     for( i=0; i<NUM_KEYS; i++ )
+	__builtin_prefetch(&work_buff[key_buff_ptr2[i+DISTANCE]]);
         work_buff[key_buff_ptr2[i]]++;  /* Now they have individual key   */
                                        /* population                     */
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
 
 /*  To obtain ranks of each key, successively add the individual key
     population                                          */
@@ -896,6 +902,7 @@ int main( int argc, char **argv )
 
     double          timecounter;
 
+    m5_reset_stats(100000, 0);
 
 /*  Initialize timers  */
     timer_on = check_timer_flag();
@@ -946,16 +953,6 @@ int main( int argc, char **argv )
 
         
 
-/*  Printout initial NPB info */
-    printf
-      ( "\n\n NAS Parallel Benchmarks (NPB3.4-OMP) - IS Benchmark\n\n" );
-    printf( " Size:  %ld  (class %c)\n", (long)TOTAL_KEYS, CLASS );
-    printf( " Iterations:  %d\n", MAX_ITERATIONS );
-#ifdef _OPENMP
-    printf( " Number of available threads:  %d\n", omp_get_max_threads() );
-#endif
-    printf( "\n" );
-
     if (timer_on) timer_start( 1 );
 
 /*  Generate random number sequence and subsequent keys on all procs */
@@ -975,18 +972,12 @@ int main( int argc, char **argv )
 
     if( CLASS != 'S' ) printf( "\n   iteration\n" );
 
-    m5_reset_stats(100000, 0);
-    m5_work_begin(0, 0);
-
 /*  This is the main iteration */
     for( iteration=1; iteration<=MAX_ITERATIONS; iteration++ )
     {
         if( CLASS != 'S' ) printf( "        %d\n", iteration );
         rank( iteration );
     }
-
-    m5_work_end(0, 0);
-    m5_dump_stats(0, 0);
 
 /*  This tests that keys are in sequence: sorting of last ranked key seq
     occurs here, but is an untimed operation                             */

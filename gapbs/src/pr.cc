@@ -11,6 +11,8 @@
 #include "graph.h"
 #include "pvector.h"
 
+#include <gem5/m5ops.h>
+
 /*
 GAP Benchmark Suite
 Kernel: PageRank (PR)
@@ -30,6 +32,7 @@ using namespace std;
 typedef float ScoreT;
 const float kDamp = 0.85;
 
+const int d = 80;
 
 pvector<ScoreT> PageRankPullGS(const Graph &g, int max_iters, double epsilon=0,
                                bool logging_enabled = false) {
@@ -45,8 +48,23 @@ pvector<ScoreT> PageRankPullGS(const Graph &g, int max_iters, double epsilon=0,
     #pragma omp parallel for reduction(+ : error) schedule(dynamic, 16384)
     for (NodeID u=0; u < g.num_nodes(); u++) {
       ScoreT incoming_total = 0;
-      for (NodeID v : g.in_neigh(u))
+      //for (NodeID v : g.in_neigh(u))
+      //  incoming_total += outgoing_contrib[v];
+      //
+      m5_work_begin(0, 0);
+
+      for (int i = 0; i < g.in_neigh(u).end() - g.in_neigh(u).begin(); ++i) {
+        if (i + d < g.in_neigh(u).end() - g.in_neigh(u).begin()) {
+            NodeID v_prefetch = *(g.in_neigh(u).begin() + i + d);
+            __builtin_prefetch(&outgoing_contrib[v_prefetch], 0, 1); // Prefetch for read
+        }
+        NodeID v = *(g.in_neigh(u).begin() + i);
         incoming_total += outgoing_contrib[v];
+      }
+
+      m5_work_end(0, 0);
+      m5_dump_stats(0, 0);
+
       ScoreT old_score = scores[u];
       scores[u] = base_score + kDamp * incoming_total;
       error += fabs(scores[u] - old_score);
@@ -95,6 +113,7 @@ bool PRVerifier(const Graph &g, const pvector<ScoreT> &scores,
 
 
 int main(int argc, char* argv[]) {
+  m5_reset_stats(0, 0);
   CLPageRank cli(argc, argv, "pagerank", 1e-4, 20);
   if (!cli.ParseArgs())
     return -1;
@@ -109,3 +128,4 @@ int main(int argc, char* argv[]) {
   BenchmarkKernel(cli, g, PRBound, PrintTopScores, VerifierBound);
   return 0;
 }
+

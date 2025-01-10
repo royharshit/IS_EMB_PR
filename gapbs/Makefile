@@ -1,6 +1,11 @@
 # See LICENSE.txt for license details.
 
-CXX_FLAGS += -std=c++11 -O3 -Wall
+GEM_HOME=../b1_instruction
+
+
+CXX_FLAGS += -std=c++11 -O3 -Wall -I $(GEM_HOME)/include
+LDFLAGS=-L$(GEM_HOME)/util/m5/build/x86/out/ -lm5
+
 PAR_FLAG = -fopenmp
 
 ifneq (,$(findstring icpc,$(CXX)))
@@ -23,7 +28,7 @@ SUITE = $(KERNELS) converter
 all: $(SUITE)
 
 % : src/%.cc src/*.h
-	$(CXX) $(CXX_FLAGS) $< -o $@
+	$(CXX) $(CXX_FLAGS) $(LDFLAGS) $< -o $@ -lm5
 
 # Testing
 include test/test.mk

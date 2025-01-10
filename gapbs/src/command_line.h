@@ -33,7 +33,7 @@ class CLBase {
   std::string get_args_ = "f:g:hk:su:m";
   std::vector<std::string> help_strings_;
 
-  int scale_ = -1;
+  int scale_ = 22;
   int degree_ = 16;
   std::string filename_ = "";
   bool symmetrize_ = false;

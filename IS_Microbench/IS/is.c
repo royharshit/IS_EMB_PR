@@ -775,11 +775,52 @@ void rank( int iteration )
 
     m5_work_begin(0, 0);
 
+    #pragma omp for nowait schedule(static) 
+    for( i=0; i < NUM_KEYS-DISTANCE; i++ ) {
+        __builtin_prefetch(&work_buff[key_buff_ptr2[i+DISTANCE]], 1, 1);
+        work_buff[key_buff_ptr2[i]]++;
+    }
+
+    for( i=NUM_KEYS-DISTANCE; i < NUM_KEYS; i++)
+        work_buff[key_buff_ptr2[i]]++;
+
+    /*
+    #pragma omp for nowait schedule(static) 
+    for( i=0; i < NUM_KEYS; i++ )
+        work_buff[key_buff_ptr2[i]]++; 
+    */
+
+    /*
     #pragma omp for nowait schedule(static)
-    for( i=0; i<NUM_KEYS; i++ )
-	__builtin_prefetch(&work_buff[key_buff_ptr2[i+DISTANCE]]);
-        work_buff[key_buff_ptr2[i]]++;  /* Now they have individual key   */
-                                       /* population                     */
+    for( i=0; i < NUM_KEYS - 5; i+=5 ) {
+        work_buff[key_buff_ptr2[i]]++;
+        work_buff[key_buff_ptr2[i+1]]++;
+        work_buff[key_buff_ptr2[i+2]]++;
+        work_buff[key_buff_ptr2[i+3]]++;
+        work_buff[key_buff_ptr2[i+4]]++;
+    }
+
+    int remaining_start = (NUM_KEYS / 5) * 5;
+    for ( int j = remaining_start; j < NUM_KEYS; j++)
+        work_buff[key_buff_ptr2[j]]++;
+    */
+
+    /* 
+    #pragma omp for nowait schedule(static)
+    for( i=0; i < NUM_KEYS - 5; i+=5 ) {
+        __builtin_prefetch(&key_buff_ptr2[i + DISTANCE]);
+        __builtin_prefetch(&key_buff_ptr2[i + 1 + DISTANCE]);
+        __builtin_prefetch(&key_buff_ptr2[i + 2 + DISTANCE]);
+        __builtin_prefetch(&key_buff_ptr2[i + 3 + DISTANCE]);
+        __builtin_prefetch(&key_buff_ptr2[i + 4 + DISTANCE]);
+        work_buff[key_buff_ptr2[i]]++;
+        work_buff[key_buff_ptr2[i+1]]++;
+           
+    int remaining_start = (NUM_KEYS / 5) * 5;
+    for ( int j = remaining_start; j < NUM_KEYS; j++)
+        work_buff[key_buff_ptr2[j]]++;
+    */
+
     m5_work_end(0, 0);
     m5_dump_stats(0, 0);
 

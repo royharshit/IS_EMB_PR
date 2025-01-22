@@ -14,6 +14,7 @@
 const size_t memsize = 128*1024*1024;
 const size_t elems = memsize / sizeof(uint32_t);
 const int DISTANCE = 32;
+const int UNROLL = 16;
 
 uint32_t hash(uint32_t data) {
     return 9*data % 17;
@@ -21,29 +22,48 @@ uint32_t hash(uint32_t data) {
 
 uint32_t time_nonprefetch_h0(uint32_t** data) {
     uint32_t sum = 0;
+    uint32_t sum_i[UNROLL] = {0};
     m5_reset_stats(100000, 0);
     m5_work_begin(0, 0);
-    for (uint32_t i = 0; i < elems; i++) {
-    	sum += *data[i];
+    for (uint32_t i = 0; i < elems - UNROLL; i += UNROLL) {
+	for (uint32_t j = 0; j < UNROLL; j++) {
+    		sum_i[j] += *data[i+j];
+	}
     }
     m5_work_end(0, 0);
     m5_dump_stats(0, 0);
+
+    for (uint32_t j = 0; j < UNROLL; j++) {
+         sum += sum_i[j];
+    }
+
     return sum;
 }
 
 uint32_t time_prefetch_h0(uint32_t **data) {
     uint32_t sum = 0;
+    uint32_t sum_i[UNROLL] = {0};
+
     m5_reset_stats(100000, 0);
     m5_work_begin(0, 0);
-    for (int i = 0; i < elems - DISTANCE; i++) {
-	__builtin_prefetch(data[i + DISTANCE]);
-    	sum += *data[i];
+    for (int i = 0; i < elems - DISTANCE - UNROLL; i += UNROLL) {
+	for (int j = 0; j < UNROLL; j++) {
+	    __builtin_prefetch(data[i+j + DISTANCE]);
+    	    sum_i[j] += *data[i+j];
+	}
     }
-    for (int i = elems - DISTANCE; i < elems; i++) {
-    	sum += *data[i];
+    for (int i = elems - DISTANCE - UNROLL; i < elems - UNROLL ; i += UNROLL) {
+	for (int j = 0; j < UNROLL; j++) {
+    	    sum_i[j] += *data[i+j];
+	}
     }
     m5_work_end(0, 0);
     m5_dump_stats(0, 0);
+
+    for (uint32_t j = 0; j < UNROLL; j++) {
+         sum += sum_i[j];
+    }
+
     return sum;
 }
 

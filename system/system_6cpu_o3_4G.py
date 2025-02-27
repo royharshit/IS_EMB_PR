@@ -32,7 +32,7 @@ args=parser.parse_args()
 
 
 
-system=System(cache_line_size=128);
+system=System(cache_line_size=64);
 
 #set clock frekansı
 system.clk_domain = SrcClockDomain()

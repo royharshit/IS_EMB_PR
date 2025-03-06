@@ -16,7 +16,7 @@ class L1Cache(Cache):
     response_latency = 4
     mshrs = 16
     tgts_per_mshr = 20
-    prefetcher = StridePrefetcher()
+    #prefetcher = StridePrefetcher()
     
 
    
@@ -65,7 +65,7 @@ class L2Cache(Cache):
     response_latency = 12
     mshrs = 48
     tgts_per_mshr = 12
-    prefetcher = StridePrefetcher()
+    #prefetcher = StridePrefetcher()
     
     def connectCPUSideBus(self, bus):
         self.cpu_side = bus.mem_side_ports

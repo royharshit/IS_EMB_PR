@@ -1,0 +1,41 @@
+warn: Base 10 memory/cache size 32kB will be cast to base 2 size 32KiB.
+warn: Base 10 memory/cache size 32kB will be cast to base 2 size 32KiB.
+warn: Base 10 memory/cache size 256kB will be cast to base 2 size 256KiB.
+warn: Base 10 memory/cache size 2048kB will be cast to base 2 size 2048KiB.
+warn: Base 10 memory/cache size 8GB will be cast to base 2 size 8GiB.
+Global frequency set at 1000000000000 ticks per second
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (16384 Mbytes) does not match the address range assigned (8192 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/remote_gdb.cc:418: warn: Sockets disabled, not accepting gdb connections
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 24.1.0.2
+gem5 compiled Mar  5 2025 21:36:25
+gem5 started Mar  5 2025 21:55:32
+gem5 executing on intel-machine, pid 22200
+command line: ../b1_instruction/build/X86/gem5.opt ../system/system_6cpu_o3_4G.py --binary ../Camel/l2_mshr_measurement_naive
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+src/sim/simulate.cc:199: info: Entering event queue @ 0.  Starting simulation...
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/mem_state.cc:448: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Non Prefetch H0
+Non Prefetch H0 sum 4021273832
+Prefetch H0
+Prefetch H0 sum 4021273832
+Non Prefetch H1
+Non Prefetch H1 sum 268435449
+Prefetch H1
+Prefetch H1 sum 268435449
+Non Prefetch H2
+Non Prefetch H2 sum 268435453
+Prefetch H2
+Prefetch H2 sum 268435453
+Non Prefetch H3
+Non Prefetch H3 sum 268435455
+Prefetch H3

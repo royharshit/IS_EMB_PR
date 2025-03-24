@@ -7,6 +7,10 @@
 #include <cstdint>
 #include <cinttypes>
 
+
+#include <gem5/m5ops.h>
+
+
 const size_t memsize = 128*1024*1024;
 const size_t elems = memsize / sizeof(uint32_t);
 const int DISTANCE = 32;
@@ -18,40 +22,49 @@ uint32_t hash(uint32_t data) {
 
 uint32_t time_nonprefetch_h0(uint32_t** data) {
     uint32_t sum = 0;
-    uint32_t sum_i[UNROLL] = {0};
-    for (int i = 0; i < elems; i++) {
-        sum += *data[i];
+    
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
+    for (uint32_t i = 0; i < elems; i++) {
+	sum += *data[i];
     }
-
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
 
     return sum;
 }
 
 uint32_t time_prefetch_h0(uint32_t **data) {
     uint32_t sum = 0;
-    uint32_t sum_i[UNROLL] = {0};
 
-    for (int i = 0; i < elems - DISTANCE; i++) {
-        __builtin_prefetch(data[i + DISTANCE]);
-        sum += *data[i];
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
+    for (int i = 0; i < elems; i++) {
+	__builtin_prefetch(data[i + DISTANCE]);
+    	sum += *data[i];
     }
-    for (int i = elems - DISTANCE; i < elems; i++) {
-        sum += *data[i];
-    }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
 
     return sum;
 }
 
 uint32_t time_nonprefetch_h1(uint32_t **data) {
     uint32_t sum = 0;
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(*data[i]);
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 uint32_t time_prefetch_h1(uint32_t **data) {
     uint32_t sum = 0;
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(*data[i]);
@@ -59,21 +72,29 @@ uint32_t time_prefetch_h1(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(*data[i]);
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_nonprefetch_h2(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(*data[i]));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h2(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(*data[i]));
@@ -81,20 +102,28 @@ uint32_t time_prefetch_h2(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(*data[i]));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 uint32_t time_nonprefetch_h3(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(*data[i])));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h3(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(*data[i])));
@@ -102,21 +131,29 @@ uint32_t time_prefetch_h3(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(*data[i])));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_nonprefetch_h4(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(*data[i]))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h4(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(*data[i]))));
@@ -124,20 +161,28 @@ uint32_t time_prefetch_h4(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(*data[i]))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 uint32_t time_nonprefetch_h5(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(*data[i])))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h5(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(hash(*data[i])))));
@@ -145,21 +190,29 @@ uint32_t time_prefetch_h5(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(*data[i])))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_nonprefetch_h6(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(*data[i]))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h6(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(hash(hash(*data[i]))))));
@@ -167,21 +220,29 @@ uint32_t time_prefetch_h6(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(*data[i]))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_nonprefetch_h7(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(*data[i])))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h7(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(hash(hash(hash(*data[i])))))));
@@ -189,20 +250,28 @@ uint32_t time_prefetch_h7(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(*data[i])))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 uint32_t time_nonprefetch_h8(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(*data[i]))))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h8(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(*data[i]))))))));
@@ -210,21 +279,29 @@ uint32_t time_prefetch_h8(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(*data[i]))))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_nonprefetch_h9(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(hash(*data[i])))))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 
 
 uint32_t time_prefetch_h9(uint32_t **data) {
     uint32_t sum = 0; 
+    m5_reset_stats(100000, 0);
+    m5_work_begin(0, 0);
     for (int i = 0; i < elems - DISTANCE; i++) {
 	__builtin_prefetch(data[i + DISTANCE]);
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(hash(*data[i])))))))));
@@ -232,6 +309,8 @@ uint32_t time_prefetch_h9(uint32_t **data) {
     for (int i = elems - DISTANCE; i < elems; i++) {
     	sum += hash(hash(hash(hash(hash(hash(hash(hash(hash(*data[i])))))))));
     }
+    m5_work_end(0, 0);
+    m5_dump_stats(0, 0);
     return sum;
 }
 

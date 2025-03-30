@@ -2,19 +2,20 @@ C=gcc
 CXX=g++
 RM=rm -f
 
-SRCS=l2_mshr_measurement.cc
-OBJS=l2_mshr_measurement
-OBJS1=l2_mshr_measurement_naive
+SRCS=camel_workload_03.cc
+SRCS1=camel_workload_unroll.cc
+OBJS=camel_workload_03
+OBJS1=camel_workload_unroll
 GEM_HOME=../b1_instruction
 
 CFLAGS=-std=c++14 -static -O3 -I $(GEM_HOME)/include
 LDFLAGS=-L$(GEM_HOME)/util/m5/build/x86/out/ -lm5
 
-l2_mshr_measurement: l2_mshr_measurement.cc
+camel_workload_03: camel_workload_03.cc
 	$(CC) $(CFLAGS) $(SRCS) -o $(OBJS) $(LDFLAGS)
 
-l2_mshr_measurement_naive: l2_mshr_measurement_naive.cc
-	$(CC) $(CFLAGS) $(SRCS) -o $(OBJS1) $(LDFLAGS)
+camel_workload_unroll: camel_workload_unroll.cc
+	$(CC) $(CFLAGS) $(SRCS1) -o $(OBJS1) $(LDFLAGS)
 
 clean:
 	$(RM) $(OBJS)
